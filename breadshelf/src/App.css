@@ -1,17 +1,8 @@
-.App {
-  text-align: center;
-}
-
-.App-header h1 {
-  color: #c985d3;
-}
-
-.Construction {
-  color: #2a1b2d;
-}
-
-.Construction img {
-  width: 80%;
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  margin-top: 0;
 }
 
 

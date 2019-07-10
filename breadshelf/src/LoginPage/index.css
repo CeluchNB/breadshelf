@@ -2,8 +2,14 @@
     height: 100%;
     width: 100%;
     background-color: #343434;
+    text-align: center;
+}
+
+.HeadContainer {
+    padding-top: 5rem;
 }
 
 .Header {
-    color: #C798D2;
+    color: #c798d2;
+    margin-top: 0;
 }

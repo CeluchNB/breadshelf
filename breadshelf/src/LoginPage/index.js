@@ -42,10 +42,7 @@ class LoginPage extends Component {
             .catch(error => console.log(error));
         auth.onAuthStateChanged(authUser => {
             if (authUser) {
-                console.log(authUser);
                 this.props.history.push(ROUTES.BREADSHELF);
-            } else {
-                console.log("no user");
             }
         });
     }

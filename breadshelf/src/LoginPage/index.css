@@ -1,7 +1,7 @@
 .LoginPage {
     height: 100%;
     width: 100%;
-    background-color: #343434;
+    background-color: #ebebeb;
     text-align: center;
 }
 
@@ -12,4 +12,8 @@
 .Header {
     color: #c798d2;
     margin-top: 0;
+}
+
+.LogInButton {
+    margin-top: 1rem;
 }

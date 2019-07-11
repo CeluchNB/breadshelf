@@ -1,35 +1,18 @@
-import app from 'firebase/app';
+import firebase from 'firebase/app';
 import 'firebase/auth';
 
 const firebaseConfig = {
-    apiKey: process.env.REACT_APP_API_KEY,
-    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-    databaseURL: process.env.REACT_APP_DB_URL,
-    projectId: process.env.REACT_APP_PROJECT_ID,
-    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
-    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-    appId: process.env.REACT_APP_APP_ID
+    apiKey: "AIzaSyCYkBwLvzE-hWo35smeIj2Y1QuraSXJxCQ",
+    authDomain: "breadshelf.firebaseapp.com",
+    databaseURL: "https://breadshelf.firebaseio.com",
+    projectId: "breadshelf",
+    storageBucket: "",
+    messagingSenderId: "93936832869",
+    appId: "1:93936832869:web:a4cb8da2ad81df9b"
 };
 
-class Firebase {
-    constructor() {
-        app.initializeApp(firebaseConfig);
-        //this.auth = app.auth();
-    }
+const fire = firebase.initializeApp(firebaseConfig);
+const auth = fire.auth();
 
-    /*doCreateUserWithEmailAndPassword = (email, password) => {
-        this.auth.createUserWithEmailAndPassword(email, password);
-    }
-
-    doSignInWithEmailAndPassword = (email, password) => {
-        this.auth.signInWithEmailAndPassword(email, password);
-    }
-
-    doSignOut = () => this.auth.signOut();
-
-    doPasswordReset = email => this.auth.sendPasswordResetEmail(email);
-
-    doPasswordUpdate = password => this.auth.currentUser.updatePassword(password);*/
-}
-
-export default Firebase;
+export default firebase;
+export { auth };

@@ -20,6 +20,13 @@ class LoginPage extends Component {
     constructor(props) {
         super(props);
 
+        auth.onAuthStateChanged(authUser => {
+            if (authUser) {
+                console.log("hitting constructor state change");
+                this.props.history.push(ROUTES.BREADSHELF);
+            }
+        });
+
         this.handleEmailChange = this.handleEmailChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
         this.trySignIn = this.trySignIn.bind(this);
@@ -40,11 +47,6 @@ class LoginPage extends Component {
     trySignIn() {
         auth.signInWithEmailAndPassword(this.state.username, this.state.password)
             .catch(error => console.log(error));
-        auth.onAuthStateChanged(authUser => {
-            if (authUser) {
-                this.props.history.push(ROUTES.BREADSHELF);
-            }
-        });
     }
 
     render() {
@@ -57,7 +59,7 @@ class LoginPage extends Component {
                     <div className="FormField">
                         <div>
                             <TextField
-                                id="outlined-email-input"
+                                id="email-input"
                                 label="Email or Username"
                                 type="text"
                                 name="email"
@@ -74,7 +76,7 @@ class LoginPage extends Component {
                         </div>
                         <div>
                             <TextField
-                                id="outlined-email-input"
+                                id="password-input"
                                 label="Password"
                                 type="password"
                                 name="password"

@@ -10,6 +10,17 @@ class BreadShelf extends Component {
     constructor(props) {
         super(props);
 
+        let user = auth.currentUser;
+        if (user === null) {
+            auth.onAuthStateChanged(authUser => {
+                if(!authUser) {
+                    this.props.history.push("/");
+                } else {
+
+                }
+            });
+        }
+
         this.signOut = this.signOut.bind(this);
     }
 

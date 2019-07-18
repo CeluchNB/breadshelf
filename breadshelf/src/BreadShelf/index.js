@@ -1,46 +1,49 @@
 import React, { Component } from 'react';
 import Button from "@material-ui/core/Button";
-import firebase, { auth } from './../Firebase/firebase.js';
 import * as ROUTES from '../constants/routes.js';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import theme from './../theme/theme.js';
 import { MuiThemeProvider } from '@material-ui/core/styles';
+import { withFirebase } from '../Firebase/index.js';
 
-class BreadShelf extends Component {
+const BreadShelf = () => (
+    <MuiThemeProvider theme={theme}>
+        <div>
+            <SignOutButton />
+        </div>
+    </MuiThemeProvider>
+);
+
+class SignOutButtonBase extends Component {
     constructor(props) {
         super(props);
 
-        let user = auth.currentUser;
-        if (user === null) {
-            auth.onAuthStateChanged(authUser => {
-                if(!authUser) {
-                    this.props.history.push("/");
-                } else {
-
-                }
-            });
-        }
+        this.props.firebase.checkOnAuthStateChanged(authUser => {
+            if(!authUser) {
+                this.props.history.push(ROUTES.LANDING);
+            }
+        });
 
         this.signOut = this.signOut.bind(this);
     }
 
     signOut() {
-        auth.signOut();
+        this.props.firebase.doSignOut().then(user => this.props.history.push(ROUTES.LANDING));
     }
 
     render() {
         return (
             <MuiThemeProvider theme={theme}>
-                <Link to={ROUTES.LANDING}>
                     <Button variant="contained" 
                             color="primary"
-                            onClick={this.signOut()}>
+                            onClick={this.signOut}>
                         Sign Out
                     </Button>
-                </Link>
             </MuiThemeProvider>
         );
     }
 }
+
+const SignOutButton = withRouter(withFirebase(SignOutButtonBase));
 
 export default BreadShelf;

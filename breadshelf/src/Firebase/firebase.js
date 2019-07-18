@@ -11,8 +11,20 @@ const firebaseConfig = {
     appId: "1:93936832869:web:a4cb8da2ad81df9b"
 };
 
-const fire = firebase.initializeApp(firebaseConfig);
-const auth = fire.auth();
+class Firebase {
+    constructor() {
+        firebase.initializeApp(firebaseConfig);
+        this.auth = firebase.auth();
+    }
 
-export default firebase;
-export { auth };
+    doSignInWithEmailAndPassword = (email, password) => (
+        this.auth.signInWithEmailAndPassword(email, password)
+    );
+
+    doSignOut = () => this.auth.signOut();
+
+    checkOnAuthStateChanged = (command) => this.auth.onAuthStateChanged(command);
+    
+}
+
+export default Firebase;

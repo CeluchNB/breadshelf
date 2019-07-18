@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import firebase, { auth } from './../Firebase/firebase.js';
+import fire, { auth } from './../Firebase/firebase.js';
 import * as ROUTES from '../constants/routes.js';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';

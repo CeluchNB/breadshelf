@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import firebase, { auth } from './../Firebase/firebase.js';
+import { Link, withRouter } from 'react-router-dom';
+import { withFirebase } from '../Firebase';
 import * as ROUTES from '../constants/routes.js';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -10,22 +10,27 @@ import './index.css';
 
 const AdapterLink = React.forwardRef((props, ref) => <Link innerRef={ref} {...props} />);
 
-class LoginPage extends Component {
+const LoginPage = () => (
+    <MuiThemeProvider theme={theme}>
+        <div className="LoginPage">
+            <div className="HeadContainer">
+                <h1 className="Header">breadshelf</h1>
+            </div>
+            <LoginForm />
+        </div>
+    </MuiThemeProvider>
+);
+
+class LoginFormBase extends Component {
 
     state = {
         username: "",
-        password: ""
+        password: "",
+        disabled: false
     }
 
     constructor(props) {
         super(props);
-
-        auth.onAuthStateChanged(authUser => {
-            if (authUser) {
-                console.log("hitting constructor state change");
-                this.props.history.push(ROUTES.BREADSHELF);
-            }
-        });
 
         this.handleEmailChange = this.handleEmailChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
@@ -35,83 +40,90 @@ class LoginPage extends Component {
     handleEmailChange = (e) => {
         this.setState({
             username: e.target.value
-        })
+        });
     }
 
     handlePasswordChange = (e) => {
         this.setState({
             password: e.target.value
-        })
+        });
     }
 
     trySignIn() {
-        auth.signInWithEmailAndPassword(this.state.username, this.state.password)
-            .catch(error => console.log(error));
+        this.setState({ disabled: true });
+        this.props.firebase
+            .doSignInWithEmailAndPassword(this.state.username, this.state.password)
+            .then(authUser => {
+                console.log(authUser);
+                this.props.history.push(ROUTES.BREADSHELF);
+            }).catch(error => {
+                console.log("error");
+            });
     }
 
     render() {
         return (
-            <MuiThemeProvider theme={theme}>
-                <div className="LoginPage">
-                    <div className="HeadContainer">
-                        <h1 className="Header">breadshelf</h1>
+            <div>      
+                <div className="FormField">
+                    <div>
+                        <TextField
+                            id="email-input"
+                            label="Email or Username"
+                            type="text"
+                            name="email"
+                            autoComplete="email"
+                            margin="normal"
+                            variant="outlined"
+                            autoFocus={true}
+                            required
+                            onChange={
+                                (e) => this.handleEmailChange(e)
+                            }
+                            value={this.state.username}
+                        />
                     </div>
-                    <div className="FormField">
-                        <div>
-                            <TextField
-                                id="email-input"
-                                label="Email or Username"
-                                type="text"
-                                name="email"
-                                autoComplete="email"
-                                margin="normal"
-                                variant="outlined"
-                                autoFocus={true}
-                                required
-                                onChange={
-                                   (e) => this.handleEmailChange(e)
-                                }
-                                value={this.state.username}
-                            />
-                        </div>
-                        <div>
-                            <TextField
-                                id="password-input"
-                                label="Password"
-                                type="password"
-                                name="password"
-                                autoComplete="password"
-                                margin="normal"
-                                variant="outlined"
-                                required
-                                onChange={
-                                    (e) => this.handlePasswordChange(e)
-                                }
-                                value={this.state.password}
-                            />
-                        </div> 
-                    </div>
-                    <div className="LogInButton">
-                        <Button 
-                            variant="contained" 
-                            color="primary"
-                            onClick={this.trySignIn}>
-                            Sign In
-                        </Button>
-                    </div>
-                    <div className="LogInButton">
-                        <Button
-                            variant="text"
-                            color="primary"
-                            component={AdapterLink}
-                            to={ROUTES.SIGN_UP}>
-                            Create Account
-                        </Button>
-                    </div>
+                    <div>
+                        <TextField
+                            id="password-input"
+                            label="Password"
+                            type="password"
+                            name="password"
+                            autoComplete="password"
+                            margin="normal"
+                            variant="outlined"
+                            required
+                            onChange={
+                                (e) => this.handlePasswordChange(e)
+                            }
+                            value={this.state.password}
+                        />
+                    </div> 
                 </div>
-            </MuiThemeProvider>
+                <div className="LogInButton">
+                    <Button 
+                        variant="contained" 
+                        color="primary"
+                        onClick={this.trySignIn}
+                        disabled={this.state.disabled}>
+                        Sign In
+                    </Button>
+                </div>
+                <div className="LogInButton">
+                    <Button
+                        variant="text"
+                        color="primary"
+                        component={AdapterLink}
+                        to={ROUTES.SIGN_UP}>
+                        Create Account
+                    </Button>
+                </div>
+            </div>
         );
     }
 }
+
+const LoginForm = withRouter(withFirebase(LoginFormBase));
+
+export { LoginForm, LoginFormBase };
 
 export default LoginPage;

@@ -57,6 +57,7 @@ class LoginFormBase extends Component {
                 console.log(authUser);
                 this.props.history.push(ROUTES.BREADSHELF);
             }).catch(error => {
+                this.setState({ disabled: false });
                 console.log("error");
             });
     }

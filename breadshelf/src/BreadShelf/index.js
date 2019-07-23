@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Button from "@material-ui/core/Button";
 import * as ROUTES from '../constants/routes.js';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import theme from './../theme/theme.js';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import { withFirebase } from '../Firebase/index.js';

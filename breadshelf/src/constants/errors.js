@@ -5,3 +5,7 @@ export const USERNAME_IS_TAKEN = 3;
 export const EMAIL_IS_USED = 4;
 export const EMPTY_FIELD = 5;
 export const EMAIL_INVALID = 6;
+export const FIRST_NAME_INVALID = 7;
+export const LAST_NAME_INVALID = 8;
+export const USERNAME_INVALID = 9;
+export const PASSWORD_INVALID = 10;

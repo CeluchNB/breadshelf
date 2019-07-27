@@ -8,3 +8,5 @@ export const FIRST_NAME_INVALID = "First name contains invalid characters (only 
 export const LAST_NAME_INVALID = "Last name contains invalid characters (only letters, spaces, or a hyphen)";
 export const USERNAME_INVALID = "Username contains invalid characters";
 export const PASSWORD_INVALID = "Password contains invalid characters";
+export const USERNAME_LOGIN_DNE = "Username or email does not exist";
+export const PASSWORD_LOGIN_INVALID = "Password is invalid";

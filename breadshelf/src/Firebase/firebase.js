@@ -27,7 +27,6 @@ class Firebase {
         this.auth
             .createUserWithEmailAndPassword(userData.email, userData.password)
             .then(user => {
-                console.log("first then");
                 this.db.collection("users").doc(user.user.uid).set({
                     email: userData.email,
                     first: userData.firstname,
@@ -35,14 +34,12 @@ class Firebase {
                     username: userData.username,
                     uid: user.user.uid
                 }).then(userCreate => {
-                    console.log("second then");
                     this.db.collection("shelves").doc(user.user.uid).set({
                         current: [],
                         have: [],
                         will: [],
                         user: this.db.collection("users").doc(user.user.uid)
                     }).then(shelfCreate => {
-                        console.log("third then");
                         this.db.collection("users").doc(user.user.uid).set({
                             shelf: this.db.collection("shelves").doc(user.user.uid)
                         }, { merge: true });

@@ -38,13 +38,13 @@ class CreateAccountFormBase extends Component {
         }
 
         this.tryCreateAccount = this.tryCreateAccount.bind(this);
+        this.handleKeyPress = this.handleKeyPress.bind(this);
     }
 
     tryCreateAccount() {
         this.setState({ createDisabled: true });
         this.validateCreateAccountInfo().then(results => {
             if(results.length === 0) {
-                console.log("results empty");
                 this.props.firebase.doCreateUser(this.state);
             } else {
                 results.forEach(error => {
@@ -164,6 +164,12 @@ class CreateAccountFormBase extends Component {
         });
     }
 
+    handleKeyPress = (e) => {
+        if( e.key === 'Enter' ) {
+            this.tryCreateAccount();
+        }
+    }
+
     updateStyles() {
         if(window.innerWidth > 800 ) {
             this.setState({
@@ -204,6 +210,7 @@ class CreateAccountFormBase extends Component {
                     autoFocus={true}
                     style={ this.state.firstNameStyle }
                     required
+                    onKeyPress={ this.handleKeyPress }
                     onChange={
                         (event) => {
                             this.setState({ 
@@ -227,6 +234,7 @@ class CreateAccountFormBase extends Component {
                     inputProps={{maxLength: 30}}
                     style={ this.state.lastNameStyle }
                     required
+                    onKeyPress={ this.handleKeyPress }
                     onChange={
                         (event) => {
                             this.setState({ 
@@ -250,6 +258,7 @@ class CreateAccountFormBase extends Component {
                         variant="outlined"
                         style={ this.state.largeFieldStyle }
                         required
+                        onKeyPress={ this.handleKeyPress }
                         onChange={
                             (event) => {
                                 this.setState({ 
@@ -272,7 +281,7 @@ class CreateAccountFormBase extends Component {
                 </div>
                 <div>
                     <TextField
-                        id="username=input"
+                        id="username-input"
                         label="Username"
                         type="text"
                         name="username"
@@ -282,6 +291,7 @@ class CreateAccountFormBase extends Component {
                         style={ this.state.largeFieldStyle }
                         inputProps={{maxLength: 20}}
                         required
+                        onKeyPress={ this.handleKeyPress }
                         onChange={
                             (event) => {
                                 this.setState({ 
@@ -314,6 +324,7 @@ class CreateAccountFormBase extends Component {
                         style={ this.state.largeFieldStyle }
                         inputProps={{maxLength: 20}}
                         required
+                        onKeyPress={ this.handleKeyPress }
                         onChange={
                             (event) => {
                                 this.setState({ 
@@ -346,6 +357,7 @@ class CreateAccountFormBase extends Component {
                         style={ this.state.largeFieldStyle }
                         inputProps={{maxLength: 20}}
                         required
+                        onKeyPress={ this.handleKeyPress }
                         onChange={
                             (event) => {
                                 this.setState({ 

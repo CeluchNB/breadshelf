@@ -55,39 +55,18 @@ class Firebase {
 
     checkOnAuthStateChanged = (command) => this.auth.onAuthStateChanged(command);
 
-    usernameExists = (username) => (
+    getUserByUsername = (username) => (
         this.db.collection('users')
             .where("username", "==", username)
             .get()
-            /*.then(querySnapshot => {
-                querySnapshot.forEach(doc => {
-                    if(doc.data().username === username) {
-                        return true;
-                    }
-                });
-            })
-            .catch(error => {
-                console.log("error, ", error);
-            });*/
     );
 
-    emailExists = (email) => (
+    getUserByEmail = (email) => (
         this.db.collection('users')
             .where("email","==", email)
             .get()
-            /*.then(querySnapshot => {
-                querySnapshot.forEach(doc => {
-                    console.log("doc: " + doc.data().email);
-                    if(doc.data().email === email) {
-                        return true;
-                    }
-                });
-            })
-            .catch(error => {
-                console.log("error: ", error);
-            });*/
     );
-    
+
 }
 
 export default Firebase;

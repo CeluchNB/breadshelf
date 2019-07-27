@@ -51,15 +51,32 @@ class LoginFormBase extends Component {
 
     trySignIn() {
         this.setState({ disabled: true });
+        //check if input is username,
+        //if username get email using getUserByUsername
+        //user querySnap doc to get email
         this.props.firebase
             .doSignInWithEmailAndPassword(this.state.username, this.state.password)
             .then(authUser => {
-                console.log(authUser);
                 this.props.history.push(ROUTES.BREADSHELF);
             }).catch(error => {
                 this.setState({ disabled: false });
                 console.log("error");
             });
+    }
+
+    validateEmail(email) {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(String(email).toLowerCase());
+    }
+
+    validateUsername(username) {
+        var re = /^[a-z0-9._-]+$/i;
+        return re.test(String(username).toLowerCase());
+    }
+
+    validatePassword(password) {
+        var re = /^[a-z0-9.!@#$%^&*()\[\]_-]+$/i;
+        return re.test(String(password).toLowerCase());
     }
 
     render() {

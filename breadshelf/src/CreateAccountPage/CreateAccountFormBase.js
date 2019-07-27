@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import * as ROUTES from '../constants/routes.js';
 import * as ERRORS from '../constants/errors.js';
 import * as ERRORSTRINGS from '../constants/errorstrings.js';
+import { validateName, validateEmail, validatePassword, validateUsername, isWeakPassword } from '../Utils/ValidateUtils';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
@@ -32,21 +33,22 @@ class CreateAccountFormBase extends Component {
             genericFieldErrorString: "",
             emailErrorString: "",
             usernameErrorString: "",
-            passwordErrorString: ""
+            passwordErrorString: "",
+            createDisabled: false
         }
 
         this.tryCreateAccount = this.tryCreateAccount.bind(this);
     }
 
     tryCreateAccount() {
+        this.setState({ createDisabled: true });
         this.validateCreateAccountInfo().then(results => {
-            console.log(results);
             if(results.length === 0) {
                 console.log("results empty");
                 this.props.firebase.doCreateUser(this.state);
             } else {
                 results.forEach(error => {
-                    console.log(error);
+                    this.setState({ createDisabled: false });
                     switch(error) {
                         case ERRORS.FIRST_NAME_INVALID:
                             this.setState({ firstNameError: true });
@@ -112,22 +114,22 @@ class CreateAccountFormBase extends Component {
             }
         });
 
-        if(!this.validateName(this.state.firstname)) {
+        if(!validateName(this.state.firstname)) {
             errorList.push(ERRORS.FIRST_NAME_INVALID);
         }
-        if(!this.validateName(this.state.lastname)) {
+        if(!validateName(this.state.lastname)) {
             errorList.push(ERRORS.LAST_NAME_INVALID);
         }
-        if(!this.validateEmail(this.state.email)) {
+        if(!validateEmail(this.state.email)) {
             errorList.push(ERRORS.EMAIL_INVALID);
         }
-        if(!this.validateUsername(this.state.username)) {
+        if(!validateUsername(this.state.username)) {
             errorList.push(ERRORS.USERNAME_INVALID);
         }
-        if(!this.validatePassword(this.state.password)) {
+        if(!validatePassword(this.state.password)) {
             errorList.push(ERRORS.PASSWORD_INVALID);
         }
-        if (this.isWeakPassword(this.state.password)) {
+        if (isWeakPassword(this.state.password)) {
             errorList.push(ERRORS.PASSWORD_IS_TOO_WEAK);
         }
         if (this.state.password !== this.state.confirmPassword) {
@@ -140,52 +142,6 @@ class CreateAccountFormBase extends Component {
         }
         
         return errorList;
-    }
-
-    validateName(name) {
-        var re = /^[a-z -]+$/i;
-        return re.test(String(name).toLowerCase());
-    }
-
-    validateEmail(email) {
-        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(String(email).toLowerCase());
-    }
-
-    validateUsername(username) {
-        var re = /^[a-z0-9._-]+$/i;
-        return re.test(String(username).toLowerCase());
-    }
-
-    validatePassword(password) {
-        var re = /^[a-z0-9.!@#$%^&*()\[\]_-]+$/i;
-        return re.test(String(password).toLowerCase());
-    }
-    
-
-    isWeakPassword(password) {
-
-        if(password.length < 6) {
-            return true;
-        }
-
-        var noUpper = true;
-        var noLower = true;
-        var noNumber = true;
-
-        for(var i = 0; i < password.length; i++) {
-            if(/^[A-Z]+$/.test(password.charAt(i))) {
-                noUpper = false;
-            }
-            if(/^[a-z]+$/.test(password.charAt(i))) {
-                noLower = false;
-            }
-            if(!isNaN(password.charAt(i) * 1)) {
-                noNumber = false;
-            }
-        }
-
-        return noUpper || noLower || noNumber;
     }
 
     usernameIsTaken(username) {
@@ -308,7 +264,7 @@ class CreateAccountFormBase extends Component {
                     />
                     <p style={{
                         color: "red", 
-                        visibility: this.state.emailError ? "visible" : "gone",
+                        display: this.state.emailError ? "block" : "none",
                         margin: "0"
                         }}>
                         {this.state.emailErrorString}
@@ -372,7 +328,7 @@ class CreateAccountFormBase extends Component {
                     />
                     <p style={{
                         color: "red", 
-                        visibility: this.state.passwordError ? "visible" : "gone",
+                        display: this.state.passwordError ? "block" : "none",
                         margin: "0"
                         }}>
                         {this.state.passwordErrorString}
@@ -404,7 +360,7 @@ class CreateAccountFormBase extends Component {
                     />
                     <p style={{
                         color: "red", 
-                        visibility: this.state.confirmPasswordError ? "visible" : "gone",
+                        display: this.state.confirmPasswordError ? "block" : "none",
                         margin: "0"
                         }}>
                         {this.state.confirmPasswordErrorString}
@@ -418,7 +374,8 @@ class CreateAccountFormBase extends Component {
                         <Button
                             variant="contained"
                             color="primary"
-                            onClick={this.tryCreateAccount}>
+                            onClick={this.tryCreateAccount}
+                            disabled={this.state.createDisabled}>
                             Create
                         </Button>
                     </div>

@@ -4,6 +4,7 @@ import { withFirebase } from '../Firebase';
 import * as ROUTES from '../constants/routes.js';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import { validateUsername, validateEmail, validatePassword } from './../Utils/ValidateUtils';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import theme from './../theme/theme';
 import './index.css';
@@ -62,21 +63,6 @@ class LoginFormBase extends Component {
                 this.setState({ disabled: false });
                 console.log("error");
             });
-    }
-
-    validateEmail(email) {
-        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(String(email).toLowerCase());
-    }
-
-    validateUsername(username) {
-        var re = /^[a-z0-9._-]+$/i;
-        return re.test(String(username).toLowerCase());
-    }
-
-    validatePassword(password) {
-        var re = /^[a-z0-9.!@#$%^&*()\[\]_-]+$/i;
-        return re.test(String(password).toLowerCase());
     }
 
     render() {

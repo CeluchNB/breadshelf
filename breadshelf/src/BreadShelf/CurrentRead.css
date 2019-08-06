@@ -1,0 +1,11 @@
+.CurrentRead {
+    color: #c798d2;
+    border-color: #c798d2;
+    border-bottom: 1px solid #c798d2;
+    text-align: center;
+}
+
+.BookProp {
+    display: inline;
+    padding-right: 1rem;
+}

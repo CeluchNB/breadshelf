@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import Button from "@material-ui/core/Button";
-import CurrentReadBase from './CurrentReadBase.js';
-import * as ROUTES from '../constants/routes.js';
 import { withRouter } from 'react-router-dom';
-import theme from './../theme/theme.js';
+import Button from "@material-ui/core/Button";
 import { MuiThemeProvider } from '@material-ui/core/styles';
+import * as ROUTES from '../constants/routes.js';
+import theme from './../theme/theme.js';
 import { withFirebase } from '../Firebase/index.js';
+import CurrentReadBase from './CurrentReadBase.js';
+import WillReadBase from './WillReadBase.js';
+import HaveReadBase from './HaveReadBase.js';
 import './index.css';
 
 const BreadShelf = () => (
@@ -14,6 +16,9 @@ const BreadShelf = () => (
             <SignOutButton />
             <h1 className="Header">breadshelf</h1>
             <CurrentRead />
+            <div>
+                <WillRead />
+            </div>
         </div>
     </MuiThemeProvider>
 );
@@ -50,5 +55,6 @@ class SignOutButtonBase extends Component {
 
 const SignOutButton = withRouter(withFirebase(SignOutButtonBase));
 const CurrentRead = withRouter(withFirebase(CurrentReadBase));
+const WillRead = withRouter(WillReadBase);
 
 export default BreadShelf;

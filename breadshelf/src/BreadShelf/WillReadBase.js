@@ -1,28 +1,29 @@
 import React, { Component } from 'react';
 import Paper from '@material-ui/core/Paper';
-import Book from './../Components/Book.js';
-import './CurrentRead.css';
+import './WillRead.css';
 
-class CurrentReadBase extends Component {
-
+class WillReadBase extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            books: []
+        };
     }
 
     render() {
+
         const paperStyle = {
-            backgroundColor: '#c798d2'
+            backgroundColor: '#4fff69'
         };
 
         return (
-            <div className="CurrentRead">
+            <div>
                 <Paper style={paperStyle}>
-                    <Book title="The Vanishing American Adult" author="Dr. Ben Sasse" />
+                    <p>hello world</p>
                 </Paper>
             </div>
         );
     }
-
 }
 
-export default CurrentReadBase;
+export default WillReadBase;

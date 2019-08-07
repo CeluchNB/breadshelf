@@ -3,11 +3,11 @@ import { Link, withRouter } from 'react-router-dom';
 import { withFirebase } from '../Firebase';
 import * as ROUTES from '../constants/routes.js';
 import * as ERRORSTRINGS from '../constants/errorstrings.js';
+import { validateUsername, validateEmail } from './../Utils/ValidateUtils';
+import theme from './../theme/theme';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import { validateUsername, validateEmail } from './../Utils/ValidateUtils';
 import { MuiThemeProvider } from '@material-ui/core/styles';
-import theme from './../theme/theme';
 import './index.css';
 
 const AdapterLink = React.forwardRef((props, ref) => <Link innerRef={ref} {...props} />);
@@ -25,17 +25,17 @@ const LoginPage = () => (
 
 class LoginFormBase extends Component {
 
-    state = {
-        username: "",
-        password: "",
-        disabled: false,
-        errorMsg: "",
-        usernameError: false,
-        passwordError: false,
-    }
-
     constructor(props) {
         super(props);
+
+        this.state = {
+            username: "",
+            password: "",
+            disabled: false,
+            errorMsg: "",
+            usernameError: false,
+            passwordError: false,
+        }
 
         this.handleEmailChange = this.handleEmailChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);

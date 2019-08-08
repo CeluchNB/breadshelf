@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ListItemText from '@material-ui/core/ListItemText';
+import { Typography } from '@material-ui/core';
 
 class Book extends Component {
     constructor(props) {
@@ -19,16 +19,18 @@ class Book extends Component {
     }
 
     render() {
-        const bookStyle = {
-            fontWeight: '600pt'
-        };
         return (
             <div>
-                <ListItemText 
-                    primary={this.state.title} 
-                    secondary={this.state.author} 
-                    primaryTypographyProps={{display: 'inline'}}
-                    secondaryTypographyProps={{display: 'inline'}} />
+                <Typography 
+                    variant="subtitle1" 
+                    style={{display: 'inline', marginRight: '1rem'}}>
+                    {this.state.title}
+                </Typography>
+                <Typography variant="subtitle2"
+                    style={{display: 'inline'}}>
+                    {this.state.author}
+                </Typography>
+
             </div>
         );
     }

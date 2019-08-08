@@ -7,6 +7,11 @@ class CurrentReadBase extends Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            books: [
+                { title: "The Vanishing American Adult", author: "Ben Sasse" }
+            ]
+        }
     }
 
     render() {
@@ -17,7 +22,7 @@ class CurrentReadBase extends Component {
         return (
             <div className="CurrentRead">
                 <Paper style={paperStyle}>
-                    <Book title="The Vanishing American Adult" author="Dr. Ben Sasse" />
+                    <Book title={this.state.books[0].title} author={this.state.books[0].author}/>
                 </Paper>
             </div>
         );

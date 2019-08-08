@@ -6,8 +6,7 @@ import * as ROUTES from '../constants/routes.js';
 import theme from './../theme/theme.js';
 import { withFirebase } from '../Firebase/index.js';
 import CurrentReadBase from './CurrentReadBase.js';
-import WillReadBase from './WillReadBase.js';
-import HaveReadBase from './HaveReadBase.js';
+import BreadshelfListBase from './BreadshelfListBase.js'
 import './index.css';
 
 const BreadShelf = () => (
@@ -16,8 +15,9 @@ const BreadShelf = () => (
             <SignOutButton />
             <h1 className="Header">breadshelf</h1>
             <CurrentRead />
-            <div>
-                <WillRead />
+            <div className="BreadshelfListContent">
+                <WillRead tense="will"/>
+                <HaveRead tense="have"/>
             </div>
         </div>
     </MuiThemeProvider>
@@ -55,6 +55,7 @@ class SignOutButtonBase extends Component {
 
 const SignOutButton = withRouter(withFirebase(SignOutButtonBase));
 const CurrentRead = withRouter(withFirebase(CurrentReadBase));
-const WillRead = withRouter(WillReadBase);
+const WillRead = withRouter(BreadshelfListBase);
+const HaveRead = withRouter(BreadshelfListBase);
 
 export default BreadShelf;

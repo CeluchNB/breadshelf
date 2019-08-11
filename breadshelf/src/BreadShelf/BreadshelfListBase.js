@@ -3,17 +3,17 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
-import { Scrollbars } from 'react-custom-scrollbars';
-import './BreadshelfList.css';
-import Book from '../Components/Book';
 import { ListItem } from '@material-ui/core';
+import { Scrollbars } from 'react-custom-scrollbars';
+import Book from '../Components/Book';
+import AddBook from '../Components/AddBook';
+import './BreadshelfList.css';
 
 class BreadshelfListBase extends Component {
     constructor(props) {
         super(props);
 
         this.willReadState = {
-            //paperColor: '#4fff69',
             paperColor: 'rgba(79, 255, 105, 0.5)',
             floatDirection: 'left',
             tenseTitle: 'Will Read'
@@ -63,7 +63,7 @@ class BreadshelfListBase extends Component {
             paddingBottom: '0rem',
             paddingLeft: '2rem',
             color: '#4e4e4e',
-            borderBottom: '1px solid #4e4e4e'
+            borderBottom: '1px solid rgba(0,0,0,0.12)'
         };
 
         return (
@@ -76,17 +76,21 @@ class BreadshelfListBase extends Component {
                         autoHideDuration={500}
                         className="Scrollbar"
                         >
-                        <List style={{paddingBottom: '1rem'}}>
+                        <List style={{marginRight: '0.25rem', marginLeft: '0.25rem', paddingTop: '0'}}>
                             {
                                 this.state.books.map((book, index) => {
                                     return (
-                                        <ListItem key={index}>
-                                            <Book title={book.title} author={book.author}/>
-                                        </ListItem>
+                                        <div key={index}>
+                                            <ListItem>
+                                                <Book title={book.title} author={book.author} willRead={this.props.tense === "will"}/>
+                                            </ListItem>
+                                            <Divider />
+                                        </div>
                                     );
                                 })
                             }
                         </List>
+                        <AddBook />
                     </Scrollbars>
                 </Paper>
             </div>

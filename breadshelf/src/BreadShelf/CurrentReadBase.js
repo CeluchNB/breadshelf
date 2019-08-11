@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import ListItem from '@material-ui/core/ListItem';
 import Book from './../Components/Book.js';
 import './CurrentRead.css';
 
@@ -27,10 +28,10 @@ class CurrentReadBase extends Component {
         };
 
         return (
-            <div className="CurrentRead">
+            <div className="CurrentRead" >
                 <Paper style={paperStyle}>
                     <Typography variant="h6" style={headerStyle}>Current Read</Typography>
-                    <div className="CurrentReadItem">
+                    <div style={{display: 'flex'}}>
                         <Book title={this.state.books[0].title} author={this.state.books[0].author}/>
                     </div>
                 </Paper>

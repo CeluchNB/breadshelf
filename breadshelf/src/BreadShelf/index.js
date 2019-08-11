@@ -12,8 +12,10 @@ import './index.css';
 const BreadShelf = () => (
     <MuiThemeProvider theme={theme}>
         <div className="Content">
-            <SignOutButton />
-            <h1 className="Header">breadshelf</h1>
+            <div className="Header">
+                <SignOutButton />
+                <h1>breadshelf</h1>
+            </div>
             <CurrentRead />
             <div className="BreadshelfListContent">
                 <WillRead tense="will"/>

@@ -4,4 +4,10 @@
     display: block;
     text-align: left;
     margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.Scrollbar > :first-child{
+    margin-bottom: 0px !important;
+    margin-right: -18px !important;
 }

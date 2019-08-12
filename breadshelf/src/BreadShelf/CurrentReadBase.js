@@ -72,7 +72,7 @@ class CurrentReadBase extends Component {
                                 </Typography>
                                 <Typography variant="subtitle2"
                                     style={{display: 'inline-block'}}>
-                                    {this.state.book.author}
+                                    {this.state.hasBook ? this.state.book.author : "Get Reading!"}
                                 </Typography>
                             </div>
                             <IconButton style={{

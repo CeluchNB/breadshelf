@@ -26,20 +26,7 @@ class BreadshelfListBase extends Component {
         }
 
         this.state = {
-            books: [
-                { title: "Thinking Fast, and Slow", author: "Daniel Khaneman" },
-                { title: "The Republic", author: "Plato" },
-                { title: "The Innovator's DNA", author: "Clayton Christenson" },
-                { title: "Beyond Freedom & Dignity", author: "B.F. Skinner" },
-                { title: "A Speck in the Sea", author: "Johnny Aldridge" },
-                { title: "Closer to Shore", author: "Michael Capuzzo" },
-                { title: "The Four", author: "Scott Galloway" },
-                { title: "Steve Jobs", author: "Walter Isaacson" },
-                { title: "The Gulag Archipelago Vol. 1", author: "Aleksandr Solzhenitsyn" },
-                { title: "Bad Blood", author: "John Carreyrou" },
-                { title: "12 Rules for Life", author: "Jordan Peterson" },
-                { title: "Algorthims to Live By", author: "Brian Christian" }
-            ]
+            books: [...this.props.books]
         };
 
         if(this.props.tense === "will") {
@@ -48,6 +35,25 @@ class BreadshelfListBase extends Component {
             this.state = { ...this.state, ...this.haveReadState };
         }
 
+        this.addBook = this.addBook.bind(this);
+        this.deleteBook = this.deleteBook.bind(this);
+        this.moveBook = this.moveBook.bind(this);
+    }
+
+    componentWillReceiveProps(props) {
+        this.setState({ books: [...props.books]});
+    }
+
+    addBook = (book) => {
+        this.props.addBook(book);
+    }
+
+    deleteBook = (index) => {
+        this.props.removeBook(index);
+    }
+
+    moveBook = (book, index) => {
+        this.props.moveBook(book, index);
     }
 
     render() {
@@ -75,14 +81,23 @@ class BreadshelfListBase extends Component {
                         autoHideTimeout={1000}
                         autoHideDuration={500}
                         className="Scrollbar"
+                        ref="scrollbars"
                         >
-                        <List style={{marginRight: '0.25rem', marginLeft: '0.25rem', paddingTop: '0'}}>
+                        <List style={{marginRight: '0.5rem', marginLeft: '0.5rem', paddingTop: '0'}}>
                             {
                                 this.state.books.map((book, index) => {
                                     return (
                                         <div key={index}>
                                             <ListItem>
-                                                <Book title={book.title} author={book.author} willRead={this.props.tense === "will"}/>
+                                                <Book 
+                                                    title={book.title} 
+                                                    author={book.author} 
+                                                    hasCurrent={this.props.hasCurrent}
+                                                    willRead={this.props.tense === "will"}
+                                                    deleteBook={() => this.deleteBook(index)}
+                                                    moveBook={
+                                                        () =>  this.moveBook({title: book.title, author: book.author}, index)
+                                                    } />
                                             </ListItem>
                                             <Divider />
                                         </div>
@@ -90,7 +105,7 @@ class BreadshelfListBase extends Component {
                                 })
                             }
                         </List>
-                        <AddBook />
+                        <AddBook addBook={this.addBook} />
                     </Scrollbars>
                 </Paper>
             </div>

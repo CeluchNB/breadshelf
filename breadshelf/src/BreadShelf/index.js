@@ -9,12 +9,12 @@ import CurrentReadBase from './CurrentReadBase.js';
 import BreadshelfListBase from './BreadshelfListBase.js'
 import './index.css';
 
-const BreadShelf = () => (
+/*const BreadShelf = () => (
     <MuiThemeProvider theme={theme}>
         <div className="Content">
             <div className="Header">
+                <h1 style={{display: 'inline'}}>breadshelf</h1>
                 <SignOutButton />
-                <h1>breadshelf</h1>
             </div>
             <CurrentRead />
             <div className="BreadshelfListContent">
@@ -23,7 +23,122 @@ const BreadShelf = () => (
             </div>
         </div>
     </MuiThemeProvider>
-);
+);*/
+
+class BreadShelf extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            willBooks: [
+                { title: "Thinking Fast, and Slow", author: "Daniel Khaneman" },
+                { title: "The Republic", author: "Plato" },
+                { title: "The Innovator's DNA", author: "Clayton Christenson" },
+                { title: "Beyond Freedom & Dignity", author: "B.F. Skinner" },
+                { title: "A Speck in the Sea", author: "Johnny Aldridge" },
+                { title: "Closer to Shore", author: "Michael Capuzzo" },
+                { title: "The Four", author: "Scott Galloway" }
+            ],
+            haveBooks: [
+                { title: "Steve Jobs", author: "Walter Isaacson" },
+                { title: "The Gulag Archipelago Vol. 1", author: "Aleksandr Solzhenitsyn" },
+                { title: "Bad Blood", author: "John Carreyrou" },
+                { title: "12 Rules for Life", author: "Jordan Peterson" },
+                { title: "Algorthims to Live By", author: "Brian Christian" }
+            ],
+            currentBook: { title: "The Vanishing American Adult", author: "Ben Sasse" },
+            hasCurrent: true
+        };
+
+    }
+
+    addWillBook = (book) => {
+        this.setState({ willBooks: [...this.state.willBooks, book]});
+    }
+
+    addHaveBook = (book) => {
+        this.setState({ haveBooks: [...this.state.haveBooks, book]});
+    }
+
+    removeWillBook = (index) => {
+        var books = [...this.state.willBooks];
+        if (index >= 0) {
+            books.splice(index, 1);
+            this.setState({ willBooks: books });
+        }
+    }
+
+    removeHaveBook = (index) => {
+        var books = [...this.state.haveBooks];
+        if (index >= 0) {
+            books.splice(index, 1);
+            this.setState({ haveBooks: books });
+        }
+    }
+
+    moveWillBook = (book, index) => {
+        this.removeWillBook(index);
+        this.setCurrent(book);
+    }
+
+    moveHaveBook = (book, index) => {
+        this.removeHaveBook(index);
+        this.setCurrent(book);
+    }
+
+    removeCurrent = () => {
+        this.setState({ currentBook: {}, hasCurrent: false });
+    }
+
+    setCurrent = (book) => {
+        this.setState({ currentBook: book, hasCurrent: true });
+    }
+
+    moveCurrentToWill = () => {
+        this.addWillBook(this.state.currentBook);
+        this.removeCurrent();
+    }
+
+    moveCurrentToDone = () => {
+        this.addHaveBook(this.state.currentBook);
+        this.removeCurrent();
+    }
+
+    render() {
+        return (
+            <MuiThemeProvider theme={theme}>
+                <div className="Content">
+                    <div className="Header">
+                        <h1 style={{display: 'inline'}}>breadshelf</h1>
+                        <SignOutButton />
+                    </div>
+                    <CurrentRead 
+                        book={this.state.currentBook} 
+                        hasBook={this.state.hasCurrent}
+                        moveCurrentToWill={this.moveCurrentToWill}
+                        moveCurrentToDone={this.moveCurrentToDone} />
+                    <div className="BreadshelfListContent">
+                        <WillRead 
+                            tense="will"
+                            hasCurrent={this.state.hasCurrent}
+                            books={this.state.willBooks} 
+                            addBook={this.addWillBook}
+                            removeBook={this.removeWillBook}
+                            moveBook={this.moveWillBook}/>
+                        <HaveRead 
+                            tense="have"
+                            hasCurrent={this.state.hasCurrent}
+                            books={this.state.haveBooks} 
+                            addBook={this.addHaveBook}
+                            removeBook={this.removeHaveBook}
+                            moveBook={this.moveHaveBook}/>
+                    </div>
+                </div>
+            </MuiThemeProvider>
+        );
+    }
+}
 
 class SignOutButtonBase extends Component {
     constructor(props) {

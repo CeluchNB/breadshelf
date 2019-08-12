@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import Input from '@material-ui/core/Input';
 import IconButton from '@material-ui/core/IconButton';
-import AddIcon from '@material-ui/icons/Add';
 import Typography from '@material-ui/core/Typography';
+import ListItem from '@material-ui/core/ListItem';
+import AddIcon from '@material-ui/icons/Add';
 
 class AddBook extends Component {
 
@@ -12,7 +13,9 @@ class AddBook extends Component {
         this.state = {
             disable: true,
             titleValue: false,
-            authorValue: false
+            authorValue: false,
+            title: "",
+            author: ""
         };
 
         this.handleTitleValue = this.handleTitleValue.bind(this);
@@ -22,6 +25,7 @@ class AddBook extends Component {
     }
 
     handleTitleValue = (e) => {
+        this.setState({ title: e.target.value });
         if (e.target.value.length > 0) {
             this.setState({ 
                 titleValue: true,
@@ -36,6 +40,7 @@ class AddBook extends Component {
     }
 
     handleAuthorValue = (e) => {
+        this.setState({ author: e.target.value });
         if (e.target.value.length > 0) {
             this.setState({ 
                 authorValue: true,
@@ -52,42 +57,45 @@ class AddBook extends Component {
     handleKeyPressed = (e) => {
         if (e.key === 'Enter' && !this.state.disable) {
             this.addBook();
-        } else {
-            console.log("disabled");
         }
     }
 
     addBook() {
-        console.log("adding book");
+        this.setState({ title: "", author: "" });
+        this.props.addBook({title: this.state.title, author: this.state.author });
     }
 
     render() {
         return (
-            <div style={{margin: '0rem 0.5rem 2rem 0.5rem'}}>
-                <IconButton
-                    disabled={this.state.disable}
-                    onClick={this.addBook}>    
-                    <AddIcon />
-                </IconButton>
-                <Input 
-                    id="title"
-                    label="Title"
-                    type="text"
-                    name="title"
-                    placeholder="Title"
-                    style={{width: '40%'}}
-                    onChange={ (e) => this.handleTitleValue(e)} 
-                    onKeyPress={ (e) => this.handleKeyPressed(e) }/>
-                <Typography component="p" style={{display: 'inline', margin: '0.5rem'}}>by</Typography>
-                <Input 
-                    id="author"
-                    label="Author"
-                    type="text"
-                    name="author"
-                    placeholder="Author"
-                    style={{width: '40%'}}
-                    onChange={ (e) => this.handleAuthorValue(e)} 
-                    onKeyPress={ (e) => this.handleKeyPressed(e) }/>
+            <div style={{margin: '0rem 0rem 2rem 0.5rem'}}>
+                <ListItem>
+                    <IconButton
+                        disabled={this.state.disable}
+                        onClick={this.addBook}>    
+                        <AddIcon />
+                    </IconButton>
+                    <Input 
+                        id="title"
+                        label="Title"
+                        type="text"
+                        name="title"
+                        placeholder="Title"
+                        value={this.state.title}
+                        style={{maxWidth: '30%', minWidth: '20%', marginLeft: '0.25rem'}}
+                        onChange={ (e) => this.handleTitleValue(e)} 
+                        onKeyPress={ (e) => this.handleKeyPressed(e) }/>
+                    <Typography component="p" style={{display: 'inline', margin: '0.5rem'}}>by</Typography>
+                    <Input 
+                        id="author"
+                        label="Author"
+                        type="text"
+                        name="author"
+                        placeholder="Author"
+                        value={this.state.author}
+                        style={{maxWidth: '30%', minWidth: '20%'}}
+                        onChange={ (e) => this.handleAuthorValue(e)} 
+                        onKeyPress={ (e) => this.handleKeyPressed(e) }/>
+                </ListItem>
             </div>
         );
     }

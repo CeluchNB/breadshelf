@@ -3,7 +3,6 @@ import { Typography } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import ClearIcon from '@material-ui/icons/Clear';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 class Book extends Component {
     constructor(props) {
@@ -12,14 +11,24 @@ class Book extends Component {
             title: props.title,
             author: props.author
         };
+
+        this.deleteBook = this.deleteBook.bind(this);
+        this.moveBook = this.moveBook.bind(this);
     }
 
     componentWillReceiveProps(props) {
-        console.log(props);
         this.setState({
             title: props.title,
             author: props.author
         });
+    }
+
+    deleteBook() {
+        this.props.deleteBook();
+    }
+
+    moveBook() {
+        this.props.moveBook();
     }
 
     render() {
@@ -34,17 +43,19 @@ class Book extends Component {
                         minWidth: '47px',
                         maxWidth: '48px'
                     }
-                    }>
-                    { this.props.willRead ? <ArrowUpwardIcon /> : <ArrowBackIcon /> }
+                    }
+                    disabled={this.props.hasCurrent}
+                    onClick={this.moveBook}>
+                    <ArrowUpwardIcon />
                 </IconButton>
-                <div style={{display: 'inline', float: 'left', width: '80%'}}>
+                <div style={{display: 'inline', float: 'left', maxWidth: '60%', minWidth: '40%'}}>
                     <Typography 
                         variant="subtitle1" 
-                        style={{display: 'block', marginRight: '1rem'}}>
+                        style={{display: 'block', marginRight: '1rem', overflow: 'hidden'}}>
                         {this.state.title}
                     </Typography>
                     <Typography variant="subtitle2"
-                        style={{display: 'block'}}>
+                        style={{display: 'block', overflow: 'hidden'}}>
                         {this.state.author}
                     </Typography>
                 </div>
@@ -57,7 +68,8 @@ class Book extends Component {
                         minWidth: '47px',
                         maxWidth: '48px'
                     }
-                    }>
+                    }
+                    onClick={this.deleteBook}>
                     <ClearIcon />
                 </IconButton>
             </div>

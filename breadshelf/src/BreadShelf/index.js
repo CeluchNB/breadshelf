@@ -25,7 +25,7 @@ import './index.css';
     </MuiThemeProvider>
 );*/
 
-class BreadShelf extends Component {
+class BreadShelfBase extends Component {
 
     constructor(props) {
         super(props);
@@ -55,6 +55,8 @@ class BreadShelf extends Component {
 
     addWillBook = (book) => {
         this.setState({ willBooks: [...this.state.willBooks, book]});
+        
+        this.props.firebase.addWillBook(book);
     }
 
     addHaveBook = (book) => {
@@ -63,9 +65,11 @@ class BreadShelf extends Component {
 
     removeWillBook = (index) => {
         var books = [...this.state.willBooks];
+        var book;
         if (index >= 0) {
-            books.splice(index, 1);
+            book = books.splice(index, 1);
             this.setState({ willBooks: books });
+            this.props.firebase.removeWillBook(book[0]);
         }
     }
 
@@ -171,7 +175,8 @@ class SignOutButtonBase extends Component {
 }
 
 const SignOutButton = withRouter(withFirebase(SignOutButtonBase));
-const CurrentRead = withRouter(withFirebase(CurrentReadBase));
+const BreadShelf = withRouter(withFirebase(BreadShelfBase));
+const CurrentRead = withRouter(CurrentReadBase);
 const WillRead = withRouter(BreadshelfListBase);
 const HaveRead = withRouter(BreadshelfListBase);
 

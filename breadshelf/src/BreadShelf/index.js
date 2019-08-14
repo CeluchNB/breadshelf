@@ -3,10 +3,11 @@ import { withRouter } from 'react-router-dom';
 import Button from "@material-ui/core/Button";
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import * as ROUTES from '../constants/routes.js';
-import theme from './../theme/theme.js';
+import * as TENSE from '../constants/tense.js'
 import { withFirebase } from '../Firebase/index.js';
 import CurrentReadBase from './CurrentReadBase.js';
 import BreadshelfListBase from './BreadshelfListBase.js'
+import theme from './../theme/theme.js';
 import './index.css';
 
 /*const BreadShelf = () => (
@@ -31,36 +32,38 @@ class BreadShelfBase extends Component {
         super(props);
 
         this.state = {
-            willBooks: [
-                { title: "Thinking Fast, and Slow", author: "Daniel Khaneman" },
-                { title: "The Republic", author: "Plato" },
-                { title: "The Innovator's DNA", author: "Clayton Christenson" },
-                { title: "Beyond Freedom & Dignity", author: "B.F. Skinner" },
-                { title: "A Speck in the Sea", author: "Johnny Aldridge" },
-                { title: "Closer to Shore", author: "Michael Capuzzo" },
-                { title: "The Four", author: "Scott Galloway" }
-            ],
-            haveBooks: [
-                { title: "Steve Jobs", author: "Walter Isaacson" },
-                { title: "The Gulag Archipelago Vol. 1", author: "Aleksandr Solzhenitsyn" },
-                { title: "Bad Blood", author: "John Carreyrou" },
-                { title: "12 Rules for Life", author: "Jordan Peterson" },
-                { title: "Algorthims to Live By", author: "Brian Christian" }
-            ],
-            currentBook: { title: "The Vanishing American Adult", author: "Ben Sasse" },
+            willBooks: [],
+            haveBooks: [],
+            currentBook: {},
             hasCurrent: true
         };
 
     }
 
+    /**
+     * Adds book to will shelf in current state and db
+     * also appends firebase reference id to book param
+     * @param book object with only title and authorName
+     */
     addWillBook = (book) => {
-        this.setState({ willBooks: [...this.state.willBooks, book]});
-        
-        this.props.firebase.addWillBook(book);
+        this.props.firebase.addNewBook(book, TENSE.WILL)
+            .then(id => {
+                book.id = id;
+                this.setState({ willBooks: [...this.state.willBooks, book]});
+            });
     }
 
+    /**
+     * Adds book to have shelf in current state and db
+     * also appends firebase reference id to book param
+     * @param book object with only title and authorName
+     */
     addHaveBook = (book) => {
-        this.setState({ haveBooks: [...this.state.haveBooks, book]});
+        this.props.firebase.addNewBook(book, TENSE.HAVE)
+            .then(id => {
+                book.id = id;
+                this.setState({ haveBooks: [...this.state.haveBooks, book]});
+            });
     }
 
     removeWillBook = (index) => {

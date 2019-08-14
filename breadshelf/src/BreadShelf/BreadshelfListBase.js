@@ -91,12 +91,16 @@ class BreadshelfListBase extends Component {
                                             <ListItem>
                                                 <Book 
                                                     title={book.title} 
-                                                    author={book.author} 
+                                                    author={book.authorName} 
                                                     hasCurrent={this.props.hasCurrent}
                                                     willRead={this.props.tense === "will"}
                                                     deleteBook={() => this.deleteBook(index)}
                                                     moveBook={
-                                                        () =>  this.moveBook({title: book.title, author: book.author}, index)
+                                                        () =>  this.moveBook({
+                                                            title: book.title, 
+                                                            authorName: book.authorName,
+                                                            id: book.id
+                                                        }, index)
                                                     } />
                                             </ListItem>
                                             <Divider />

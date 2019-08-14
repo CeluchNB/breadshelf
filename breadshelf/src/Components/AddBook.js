@@ -15,7 +15,7 @@ class AddBook extends Component {
             titleValue: false,
             authorValue: false,
             title: "",
-            author: ""
+            authorName: ""
         };
 
         this.handleTitleValue = this.handleTitleValue.bind(this);
@@ -40,7 +40,7 @@ class AddBook extends Component {
     }
 
     handleAuthorValue = (e) => {
-        this.setState({ author: e.target.value });
+        this.setState({ authorName: e.target.value });
         if (e.target.value.length > 0) {
             this.setState({ 
                 authorValue: true,
@@ -61,8 +61,8 @@ class AddBook extends Component {
     }
 
     addBook() {
-        this.setState({ title: "", author: "" });
-        this.props.addBook({title: this.state.title, author: this.state.author });
+        this.props.addBook({title: this.state.title, authorName: this.state.authorName });
+        this.setState({ title: "", authorName: "" });
     }
 
     render() {
@@ -91,7 +91,7 @@ class AddBook extends Component {
                         type="text"
                         name="author"
                         placeholder="Author"
-                        value={this.state.author}
+                        value={this.state.authorName}
                         style={{maxWidth: '30%', minWidth: '20%'}}
                         onChange={ (e) => this.handleAuthorValue(e)} 
                         onKeyPress={ (e) => this.handleKeyPressed(e) }/>

@@ -72,30 +72,24 @@ class Firebase {
      * BOOK API
      */
 
-     addBookToAuthor = (book, bookRef, tense) => {
+     addBookToAuthor = async (book, bookRef) => {
         var authorsRef = this.db.collection('authors');
         var authorQuery = authorsRef.where("name", "==", book.authorName);
+        var self = this;
 
-        authorQuery
+        return authorQuery
             .get()
             .then(function(querySnapshot) {
                 if(querySnapshot.empty) {
-                    return createAuthor(book.authorName);
+                    return self.createAuthor(book.authorName);
                 } else {
-                    return doc.ref;
+                    return querySnapshot.docs[0].ref;
                 }
             })
             .then(authorRef => {
-                if(tense === TENSE.HAVE) {
-                    authorRef.set({
-                        have: bookRef
-                    });
-                } 
-                else if (tense === TENSE.WILL) {
-                    authorRef.set({
-                        will: bookRef
-                    })
-                }
+                authorRef.update({
+                    books: firebase.firestore.FieldValue.arrayUnion(bookRef)
+                }); 
             });
      }
 
@@ -110,23 +104,22 @@ class Firebase {
          return singleAuthorRef;
      }
 
-     addBookToCollection = (book) => {
+    addBookToCollection = async (book) => {
         var booksRef = this.db.collection('books');
         var bookQuery = booksRef.where("title", "==", book.title).where("authorName", "==", book.authorName);
 
-        bookQuery.get().then(querySnapshot => {
-            var singleBookRef = null;
+        return await bookQuery.get().then(querySnapshot => {
+            var singleBookRef;
             if(querySnapshot.empty) {
                 singleBookRef = booksRef.doc();
+                
                 singleBookRef.set({
                     title: book.title,
                     authorName: book.authorName,
                     id: singleBookRef.id
                 });
             } else {
-                querySnapshot.forEach(doc => {
-                    singleBookRef = doc.ref;
-                });
+                singleBookRef = querySnapshot.docs[0];
             }
             return singleBookRef;
         });
@@ -150,19 +143,34 @@ class Firebase {
 
      addUserToBook = (bookRef, tense) => {
          var id = this.auth.currentUser.uid;
+         var shelfRef = this.db.collection('shelves');
+
          if(tense === TENSE.HAVE) {
             bookRef.update({
-                have: firebase.firestore.FieldValue.arrayUnion(id)
+                have: firebase.firestore.FieldValue.arrayUnion(shelfRef.doc(id))
             });
          }
          else if (tense === TENSE.WILL) {
             bookRef.update({
-                have: firebase.firestore.FieldValue.arrayUnion(id)
+                will: firebase.firestore.FieldValue.arrayUnion(shelfRef.doc(id))
             });
          }
      }
 
-     addWillBook = (book) => {
+     addNewBook = async (book, tense) => {
+        return await this.addBookToCollection(book)
+            .then((bookRef) => {
+                this.addBookToUser(bookRef, tense);
+                this.addUserToBook(bookRef, tense);
+                this.addBookToAuthor(book, bookRef);
+                return bookRef.id;
+            })
+            .catch((error) => {
+                console.log("error: " + error);
+            });
+     }
+
+     moveBook = (book, tense) => {
 
      }
     /*addWillBook = (book) => {

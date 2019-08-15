@@ -35,8 +35,20 @@ class BreadShelfBase extends Component {
             willBooks: [],
             haveBooks: [],
             currentBook: {},
-            hasCurrent: true
+            hasCurrent: false
         };
+        
+        this.props.firebase.auth.onAuthStateChanged((user) => {
+            this.props.firebase.getBreadshelf()
+                .then(breadshelf => {
+                    this.setState({
+                        willBooks: breadshelf.willBooks,
+                        haveBooks: breadshelf.haveBooks
+                        //currentBook: breadshelf.currentBook,
+                        //hasCurrent: breadshelf.currentBook.title === null ? false : true
+                    });
+                });
+        });
 
     }
 

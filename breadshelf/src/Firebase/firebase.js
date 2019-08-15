@@ -39,7 +39,7 @@ class Firebase {
                     uid: user.user.uid
                 }).then(userCreate => {
                     this.db.collection("shelves").doc(user.user.uid).set({
-                        current: [],
+                        current: null,
                         have: [],
                         will: [],
                         user: this.db.collection("users").doc(user.user.uid)
@@ -73,9 +73,9 @@ class Firebase {
      */
 
      addBookToAuthor = async (book, bookRef) => {
-        var authorsRef = this.db.collection('authors');
-        var authorQuery = authorsRef.where("name", "==", book.authorName);
-        var self = this;
+        let authorsRef = this.db.collection('authors');
+        let authorQuery = authorsRef.where("name", "==", book.authorName);
+        let self = this;
 
         return authorQuery
             .get()
@@ -94,7 +94,7 @@ class Firebase {
      }
 
      createAuthor = (name) => {
-         var authorsRef = this.db.collection('authors');
+         let authorsRef = this.db.collection('authors');
          var singleAuthorRef = authorsRef.doc();
 
          singleAuthorRef.set({
@@ -126,7 +126,7 @@ class Firebase {
      }
 
      addBookToUser = (bookRef, tense) => {
-        var shelfRef = this.db.collection('shelves').doc(this.auth.currentUser.uid);
+        let shelfRef = this.db.collection('shelves').doc(this.auth.currentUser.uid);
 
         if(tense === TENSE.HAVE) {
             shelfRef.update({
@@ -142,8 +142,8 @@ class Firebase {
      }
 
      addUserToBook = (bookRef, tense) => {
-         var id = this.auth.currentUser.uid;
-         var shelfRef = this.db.collection('shelves');
+         let id = this.auth.currentUser.uid;
+         let shelfRef = this.db.collection('shelves');
 
          if(tense === TENSE.HAVE) {
             bookRef.update({
@@ -170,84 +170,95 @@ class Firebase {
             });
      }
 
-     moveBook = (book, tense) => {
-
-     }
-    /*addWillBook = (book) => {
-        var booksRef = this.db.collection('books');
-        var shelfRef = this.db.collection('shelves').doc(this.auth.currentUser.uid);
-        var singleBookRef = booksRef.doc();
-
-        var authorsRef = this.db.collection('authors');
-        var singleAuthorRef;
-
-        authorsRef.where("name", "==", book.author)
-            .get()
-            .then(function(querySnapshot) {
-                if(querySnapshot.empty) {
-                    singleAuthorRef = authorsRef.doc();
-                    singleAuthorRef.set({
-                        name: book.author,
-                        books: [singleBookRef]
-                    });
-                } else {
-                    querySnapshot.forEach(function(doc) {
-                        singleAuthorRef = doc.ref;
-                        doc.ref.update({
-                            books: firebase.firestore.FieldValue.arrayUnion(singleBookRef)
-                        });
-
-                        booksRef.where("title", "==", book.title)
-                            .where("author", "==", )
-                            .get()
-                            .then(function(querySnapshot) {
-                                if(querySnapshot.empty) {
-                                    singleBookRef.set({ 
-                                            title: book.title, 
-                                            author: singleAuthorRef,
-                                            will: [shelfRef]
-                                    });
-                                    shelfRef.update({
-                                    will: firebase.firestore.FieldValue.arrayUnion(singleBookRef) 
-                                    });
-                                } else {
-                                    querySnapshot.forEach(function(doc) {
-                                        doc.ref.update({
-                                            will: firebase.firestore.FieldValue.arrayUnion(shelfRef)
-                                        });
-                                        shelfRef.update({ 
-                                            will: firebase.firestore.FieldValue.arrayUnion(singleBookRef)
-                                        });
-                                    });
-                                }
-                            });
-                    });
-                }
-            });
-
+     /*moveBook = (bookId, fromTense, toTense) => {
+        let bookRef = this.db.collection("books").doc(bookId);
+        let shelfRef = this.db.collection("shelves").doc(this.auth.currentUser.uid);
         
-    }
 
-    removeWillBook = (book) => {
-        var booksRef = this.db.collection('books');
-        var shelfRef = this.db.collection('shelves').doc(this.auth.currentUser.uid);
-        var singleBookQuery = booksRef.where("title", "==", book.title).where("author", "==", book.author);
+     }*/
 
-        singleBookQuery.get()
-            .then(function(querySnapshot) {
-                querySnapshot.forEach(function(doc) {
-                    doc.ref.update({
-                       will: firebase.firestore.FieldValue.arrayRemove(shelfRef) 
-                    });
-                    shelfRef.update({
-                        will: firebase.firestore.FieldValue.arrayRemove(doc.ref) 
-                     });
+     removeBook = (bookRef, tense) => {
+        let shelfRef = this.db.collection('shelves').doc(this.auth.currentUser.uid);
+
+        switch(tense) {
+            case TENSE.HAVE:
+                shelfRef.update({
+                   have: firebase.firestore.FieldValue.arrayRemove(bookRef) 
                 });
-            });
-        
-        
+                break;
+            case TENSE.WILL:
+                shelfRef.update({
+                    will: firebase.firestore.FieldValue.arrayRemove(bookRef) 
+                });
+                break;
+            case TENSE.CURRENT:
+                shelfRef.update({
+                    current: null 
+                });
+                break;
+            default:
+                break;
+        }
+     }
 
-    }*/
+     getBooksFromShelf = async (bookRefArray) => {
+        var books = [];
+
+        for(let bookRef of bookRefArray) {
+            await this.getBookFromRef(bookRef)
+                .then(book => {
+                    books.push(book);
+                });
+        }
+
+        return books;
+     }
+
+     getBookFromRef = async (bookRef) => {
+        var book = {title: null, authorName: null, id: null};
+        
+        return await bookRef
+            .get()
+            .then(bookObj => {
+                book = {
+                    title: bookObj.data().title,
+                    authorName: bookObj.data().authorName,
+                    id: bookObj.data().id
+                }
+                return book; 
+            });
+     }
+
+     getBreadshelf = async () => {
+        let shelfRef = this.db.collection('shelves').doc(this.auth.currentUser.uid);
+        var shelfDoc = null;
+        var breadshelf = {};
+
+        return await shelfRef.get()
+            .then((doc) => {
+                shelfDoc = doc;
+                return this.getBooksFromShelf(shelfDoc.data().will);
+            })
+            .then((willBooks) => {
+                breadshelf.willBooks = willBooks;
+                return this.getBooksFromShelf(shelfDoc.data().have);
+            })
+            .then((haveBooks) => {
+                breadshelf.haveBooks = haveBooks;
+                if(shelfDoc.data().current !== null && shelfDoc.data().current !== undefined) {
+                    return this.getBookFromRef(shelfDoc.data().current);  
+                } else {
+                    return Promise.resolve({title: null});
+                }
+            })
+            .then((currentBook) => {
+                breadshelf.currentBook = currentBook;
+                return breadshelf;
+            })
+            .catch(error => {
+                console.log(error);
+            });
+     }
      
 }
 

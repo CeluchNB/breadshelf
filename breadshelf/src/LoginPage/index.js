@@ -68,7 +68,6 @@ class LoginFormBase extends Component {
                 this.props.firebase
                     .doSignInWithEmailAndPassword(res, this.state.password)
                     .then(authUser => {
-                        localStorage.setItem('userData', authUser);
                         this.props.history.push(ROUTES.BREADSHELF);
                     }).catch(error => {
                         if(error.code === "auth/user-not-found") {

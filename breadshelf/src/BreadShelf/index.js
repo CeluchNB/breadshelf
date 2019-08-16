@@ -24,7 +24,6 @@ class BreadShelfBase extends Component {
         };
         
         this.props.firebase.auth.onAuthStateChanged((user) => {
-            console.log(user);
             if(user !== null) {
                 this.props.firebase.getBreadshelf()
                     .then(breadshelf => {

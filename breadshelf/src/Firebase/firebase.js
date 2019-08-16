@@ -38,9 +38,10 @@ class Firebase {
      * creates user document in firestore users collection, and 
      * creates shelf document in firestore shelves collection
      * @param userData user data object with email, password, first and last name, username, and uid
+     * @returns Promise so we know that account has been created
      */
-    doCreateUser = (userData) => {
-        this.auth
+    doCreateUser = async (userData) => {
+       return await this.auth
             .createUserWithEmailAndPassword(userData.email, userData.password)
             .then(user => {
                 this.db.collection("users").doc(user.user.uid).set({

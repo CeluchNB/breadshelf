@@ -15,7 +15,8 @@ class AddBook extends Component {
             titleValue: false,
             authorValue: false,
             title: "",
-            authorName: ""
+            authorName: "",
+            isMobile: false
         };
 
         this.handleTitleValue = this.handleTitleValue.bind(this);
@@ -65,9 +66,13 @@ class AddBook extends Component {
         this.setState({ title: "", authorName: "" });
     }
 
+    componentWillReceiveProps(props) {
+        this.setState({isMobile: props.isMobile});
+    }
+
     render() {
         return (
-            <div style={{margin: '0rem 0rem 2rem 0.5rem'}}>
+            <div style={this.state.isMobile ? {margin: '0rem 0rem 1rem 0rem'} : {margin: '0rem 0rem 2rem 0.5rem'}}>
                 <ListItem>
                     <IconButton
                         disabled={this.state.disable}

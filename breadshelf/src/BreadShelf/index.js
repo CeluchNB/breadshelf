@@ -24,6 +24,7 @@ class BreadShelfBase extends Component {
         };
         
         this.props.firebase.auth.onAuthStateChanged((user) => {
+            console.log(user);
             if(user !== null) {
                 this.props.firebase.getBreadshelf()
                     .then(breadshelf => {
@@ -226,6 +227,7 @@ class SignOutButtonBase extends Component {
     }
 
     signOut() {
+        localStorage.setItem('userData', null);
         this.props.firebase.doSignOut().then(user => this.props.history.push(ROUTES.LANDING));
     }
 

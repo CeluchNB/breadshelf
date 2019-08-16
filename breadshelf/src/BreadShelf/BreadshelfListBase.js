@@ -42,7 +42,7 @@ class BreadshelfListBase extends Component {
     }
 
     componentWillReceiveProps(props) {
-        this.setState({ books: [...props.books], isMobile: props.isMobile});
+        this.setState({ books: [...props.books], isMobile: props.isMobile });
     }
 
     addBook = (book) => {
@@ -85,7 +85,8 @@ class BreadshelfListBase extends Component {
                         className="Scrollbar"
                         ref="scrollbars"
                         >
-                        <List style={{marginRight: '0.5rem', marginLeft: '0.5rem', paddingTop: '0'}}>
+                        <List style={this.state.isMobile ? {} :
+                            {marginRight: '0.5rem', marginLeft: '0.5rem', paddingTop: '0'}}>
                             {
                                 this.state.books.map((book, index) => {
                                     return (
@@ -111,7 +112,7 @@ class BreadshelfListBase extends Component {
                                 })
                             }
                         </List>
-                        <AddBook addBook={this.addBook} />
+                        <AddBook addBook={this.addBook} isMobile={this.state.isMobile}/>
                     </Scrollbars>
                 </Paper>
             </div>

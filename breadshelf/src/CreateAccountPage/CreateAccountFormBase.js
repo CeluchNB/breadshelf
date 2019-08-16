@@ -45,7 +45,8 @@ class CreateAccountFormBase extends Component {
         this.setState({ createDisabled: true });
         this.validateCreateAccountInfo().then(results => {
             if(results.length === 0) {
-                this.props.firebase.doCreateUser(this.state);
+                this.props.firebase.doCreateUser(this.state)
+                    .then(res => this.props.history.push(ROUTES.LANDING));
             } else {
                 results.forEach(error => {
                     this.setState({ createDisabled: false });

@@ -1,17 +1,35 @@
 .Content {
     width: 80%;
     height: 100%;
-    text-align: center;
     margin: 0 auto;
 }
 
 .Header {
     color: #c798d2;
     height: fit-content;
+    display: block;
 }
 
-.Header h1 {
+.Header .Logo {
+    display: inline-block;
+    float: left;
+}
+
+.Header .Logo h1 {
     margin: 0.1rem;
+    width: fit-content;
+}
+
+.Header .SignOutButton {
+    display: inline-block;
+    float: right;
+    margin-top: 0.25rem;
+}
+
+.Shelf {
+    display: block;
+    clear: left;
+    height: 100%;
 }
 
 .BreadshelfListContent {

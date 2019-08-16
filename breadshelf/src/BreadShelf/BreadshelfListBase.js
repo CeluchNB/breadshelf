@@ -56,6 +56,14 @@ class BreadshelfListBase extends Component {
         this.props.moveBook(book, index);
     }
 
+    updateStyles = () => {
+        
+    }
+
+    componentWillMount() {
+
+    }
+
     render() {
 
         const paperStyle = {

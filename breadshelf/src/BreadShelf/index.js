@@ -10,22 +10,6 @@ import BreadshelfListBase from './BreadshelfListBase.js'
 import theme from './../theme/theme.js';
 import './index.css';
 
-/*const BreadShelf = () => (
-    <MuiThemeProvider theme={theme}>
-        <div className="Content">
-            <div className="Header">
-                <h1 style={{display: 'inline'}}>breadshelf</h1>
-                <SignOutButton />
-            </div>
-            <CurrentRead />
-            <div className="BreadshelfListContent">
-                <WillRead tense="will"/>
-                <HaveRead tense="have"/>
-            </div>
-        </div>
-    </MuiThemeProvider>
-);*/
-
 class BreadShelfBase extends Component {
 
     constructor(props) {
@@ -35,19 +19,22 @@ class BreadShelfBase extends Component {
             willBooks: [],
             haveBooks: [],
             currentBook: {},
-            hasCurrent: false
+            hasCurrent: false,
+            mobileView: false
         };
         
         this.props.firebase.auth.onAuthStateChanged((user) => {
-            this.props.firebase.getBreadshelf()
-                .then(breadshelf => {
-                    this.setState({
-                        willBooks: breadshelf.willBooks,
-                        haveBooks: breadshelf.haveBooks
-                        //currentBook: breadshelf.currentBook,
-                        //hasCurrent: breadshelf.currentBook.title === null ? false : true
+            if(user !== null) {
+                this.props.firebase.getBreadshelf()
+                    .then(breadshelf => {
+                        this.setState({
+                            willBooks: breadshelf.willBooks,
+                            haveBooks: breadshelf.haveBooks,
+                            currentBook: breadshelf.currentBook,
+                            hasCurrent: breadshelf.currentBook.title === null ? false : true
+                        });
                     });
-                });
+            }
         });
 
     }
@@ -78,48 +65,93 @@ class BreadShelfBase extends Component {
             });
     }
 
+    /**
+     * Removes book from will shelf in the react state
+     * and makes call to database to remove book
+     * @param index index of book in state willBooks array
+     */
     removeWillBook = (index) => {
         var books = [...this.state.willBooks];
         var book;
         if (index >= 0) {
             book = books.splice(index, 1);
             this.setState({ willBooks: books });
-            this.props.firebase.removeWillBook(book[0]);
+            this.props.firebase.removeBook(book[0].id, TENSE.WILL);
         }
     }
 
+    /**
+     * Removes book from have shelf in the react state
+     * and makes call to database to remove book
+     * @param index index of book in state haveBooks array
+     */
     removeHaveBook = (index) => {
         var books = [...this.state.haveBooks];
+        var book;
         if (index >= 0) {
-            books.splice(index, 1);
+            book = books.splice(index, 1);
             this.setState({ haveBooks: books });
+            this.props.firebase.removeBook(book[0].id, TENSE.HAVE);
         }
     }
 
+    /**
+     * Moves book in willBooks state array to be the current book
+     * in state and in database
+     * @param book object of book that is being moved
+     * @param index index of book in the willBooks array
+     */
     moveWillBook = (book, index) => {
         this.removeWillBook(index);
         this.setCurrent(book);
+        this.props.firebase.moveBook(book.id, TENSE.WILL, TENSE.CURRENT);
     }
 
+    /**
+     * Moves book in haveBooks state array to be the current book
+     * in state and in database
+     * @param book object of book that is being moved
+     * @param index index of book in the haveBooks array
+     */
     moveHaveBook = (book, index) => {
         this.removeHaveBook(index);
         this.setCurrent(book);
+        this.props.firebase.moveBook(book.id, TENSE.HAVE, TENSE.CURRENT);
     }
 
+    /**
+     * Removes current book from state current object
+     * and database 
+     */
     removeCurrent = () => {
+        this.props.firebase.removeBook(this.state.currentBook.id, TENSE.CURRENT);
         this.setState({ currentBook: {}, hasCurrent: false });
     }
 
+    /**
+     * Sets react state currentBook (does not call database)
+     * @param book book object to set as currentBook
+     */
     setCurrent = (book) => {
         this.setState({ currentBook: book, hasCurrent: true });
     }
 
+    /**
+     * Moves current book to the will shelf
+     * in state and database
+     */
     moveCurrentToWill = () => {
+        this.props.firebase.moveBook(this.state.currentBook.id, TENSE.CURRENT, TENSE.WILL);
         this.addWillBook(this.state.currentBook);
         this.removeCurrent();
     }
 
+    /**
+     * Moves current book to have shelf
+     * in state and database
+     */
     moveCurrentToDone = () => {
+        this.props.firebase.moveBook(this.state.currentBook.id, TENSE.CURRENT, TENSE.HAVE);
         this.addHaveBook(this.state.currentBook);
         this.removeCurrent();
     }
@@ -129,29 +161,35 @@ class BreadShelfBase extends Component {
             <MuiThemeProvider theme={theme}>
                 <div className="Content">
                     <div className="Header">
-                        <h1 style={{display: 'inline'}}>breadshelf</h1>
-                        <SignOutButton />
+                        <div className="Logo">
+                            <h1 >breadshelf</h1>
+                        </div>
+                        <div className="SignOutButton">
+                            <SignOutButton />
+                        </div>
                     </div>
-                    <CurrentRead 
-                        book={this.state.currentBook} 
-                        hasBook={this.state.hasCurrent}
-                        moveCurrentToWill={this.moveCurrentToWill}
-                        moveCurrentToDone={this.moveCurrentToDone} />
-                    <div className="BreadshelfListContent">
-                        <WillRead 
-                            tense="will"
-                            hasCurrent={this.state.hasCurrent}
-                            books={this.state.willBooks} 
-                            addBook={this.addWillBook}
-                            removeBook={this.removeWillBook}
-                            moveBook={this.moveWillBook}/>
-                        <HaveRead 
-                            tense="have"
-                            hasCurrent={this.state.hasCurrent}
-                            books={this.state.haveBooks} 
-                            addBook={this.addHaveBook}
-                            removeBook={this.removeHaveBook}
-                            moveBook={this.moveHaveBook}/>
+                    <div className="Shelf">
+                        <CurrentRead 
+                            book={this.state.currentBook} 
+                            hasBook={this.state.hasCurrent}
+                            moveCurrentToWill={this.moveCurrentToWill}
+                            moveCurrentToDone={this.moveCurrentToDone} />
+                        <div className="BreadshelfListContent">
+                            <WillRead 
+                                tense="will"
+                                hasCurrent={this.state.hasCurrent}
+                                books={this.state.willBooks} 
+                                addBook={this.addWillBook}
+                                removeBook={this.removeWillBook}
+                                moveBook={this.moveWillBook}/>
+                            <HaveRead 
+                                tense="have"
+                                hasCurrent={this.state.hasCurrent}
+                                books={this.state.haveBooks} 
+                                addBook={this.addHaveBook}
+                                removeBook={this.removeHaveBook}
+                                moveBook={this.moveHaveBook}/>
+                        </div>
                     </div>
                 </div>
             </MuiThemeProvider>

@@ -23,10 +23,22 @@ class Firebase {
     /** 
      * AUTHENTICATION API 
      */
+
+     /**
+      * Perform auth sign in with email and password
+      * @param email email associated with account
+      * @param password password associated with account
+      */
     doSignInWithEmailAndPassword = (email, password) => (
         this.auth.signInWithEmailAndPassword(email, password)
     );
 
+    /**
+     * Creates user in firebase authentication,
+     * creates user document in firestore users collection, and 
+     * creates shelf document in firestore shelves collection
+     * @param userData user data object with email, password, first and last name, username, and uid
+     */
     doCreateUser = (userData) => {
         this.auth
             .createUserWithEmailAndPassword(userData.email, userData.password)
@@ -52,16 +64,34 @@ class Firebase {
             })
     }
 
+    /**
+     * performs authentication sign out
+     */
     doSignOut = () => this.auth.signOut();
 
+    /**
+     * perform command onAuthStateChanged
+     * @param command function that performs some action
+     */
     checkOnAuthStateChanged = (command) => this.auth.onAuthStateChanged(command);
 
+    /**
+     * gets user based on username
+     * @param username username of user
+     * @returns Promise with query of user document
+     */
     getUserByUsername = (username) => (
         this.db.collection('users')
             .where("username", "==", username)
             .get()
     );
 
+
+    /**
+     * gets user base on email
+     * @param email email associated with user
+     * @returns Promise with query of user document
+     */
     getUserByEmail = (email) => (
         this.db.collection('users')
             .where("email","==", email)
@@ -72,12 +102,18 @@ class Firebase {
      * BOOK API
      */
 
-     addBookToAuthor = async (book, bookRef) => {
+     /**
+      * Adds book to an author's list of books
+      * @param book book object
+      * @param bookRef document reference associated with book object
+      * @returns Promise
+      */
+     addBookToAuthor = (book, bookRef) => {
         let authorsRef = this.db.collection('authors');
         let authorQuery = authorsRef.where("name", "==", book.authorName);
         let self = this;
 
-        return authorQuery
+        authorQuery
             .get()
             .then(function(querySnapshot) {
                 if(querySnapshot.empty) {
@@ -93,6 +129,11 @@ class Firebase {
             });
      }
 
+     /**
+      * Creates a new author
+      * @param name name of author
+      * @returns document reference to new author
+      */
      createAuthor = (name) => {
          let authorsRef = this.db.collection('authors');
          var singleAuthorRef = authorsRef.doc();
@@ -104,6 +145,11 @@ class Firebase {
          return singleAuthorRef;
      }
 
+     /**
+      * Adds book to firestore books collection
+      * @param book book object
+      * @returns Promise containing document reference of book
+      */
     addBookToCollection = async (book) => {
         var booksRef = this.db.collection('books');
         var bookQuery = booksRef.where("title", "==", book.title).where("authorName", "==", book.authorName);
@@ -119,44 +165,78 @@ class Firebase {
                     id: singleBookRef.id
                 });
             } else {
-                singleBookRef = querySnapshot.docs[0];
+                singleBookRef = querySnapshot.docs[0].ref;
             }
             return singleBookRef;
         });
      }
 
+     /**
+      * Adds book to correct book array in firebase user document
+      * @param bookRef document reference of book
+      * @param tense tense of shelf (will, have, or current)
+      */
      addBookToUser = (bookRef, tense) => {
         let shelfRef = this.db.collection('shelves').doc(this.auth.currentUser.uid);
 
-        if(tense === TENSE.HAVE) {
-            shelfRef.update({
-                have: firebase.firestore.FieldValue.arrayUnion(bookRef)
-            });
-        }
-        else if (tense === TENSE.WILL) {
-            shelfRef.update({
-                will: firebase.firestore.FieldValue.arrayUnion(bookRef)
-            });
+        switch(tense) {
+            case TENSE.HAVE:
+                shelfRef.update({
+                    have: firebase.firestore.FieldValue.arrayUnion(bookRef)
+                });
+                break;
+            case TENSE.WILL:
+                shelfRef.update({
+                    will: firebase.firestore.FieldValue.arrayUnion(bookRef)
+                });
+                break;
+            case TENSE.CURRENT:
+                shelfRef.update({
+                    current: bookRef
+                });
+                break;
+            default:
+                break;
         }
 
      }
 
+     /**
+      * Adds reference to user in firebase book document 
+      * in correct book array
+      * @param bookRef document reference to book
+      * @param tense tense of shelf (will, have, or current)
+      */
      addUserToBook = (bookRef, tense) => {
-         let id = this.auth.currentUser.uid;
-         let shelfRef = this.db.collection('shelves');
+         let shelfRef = this.db.collection('shelves').doc(this.auth.currentUser.uid);
 
-         if(tense === TENSE.HAVE) {
-            bookRef.update({
-                have: firebase.firestore.FieldValue.arrayUnion(shelfRef.doc(id))
-            });
-         }
-         else if (tense === TENSE.WILL) {
-            bookRef.update({
-                will: firebase.firestore.FieldValue.arrayUnion(shelfRef.doc(id))
-            });
+         switch(tense) {
+             case TENSE.HAVE:
+                bookRef.update({
+                    have: firebase.firestore.FieldValue.arrayUnion(shelfRef)
+                });
+                break;
+            case TENSE.WILL:
+                bookRef.update({
+                    will: firebase.firestore.FieldValue.arrayUnion(shelfRef)
+                });
+                break;
+            case TENSE.CURRENT:
+                bookRef.update({
+                    current: firebase.firestore.FieldValue.arrayUnion(shelfRef)
+                })
+                break;
+            default:
+                break;
          }
      }
 
+     /**
+      * Adds new book to firestore database
+      * @param book book object
+      * @param tense tense of shelf book is in (will, have, or current)
+      * @returns Promise with id of bookRef
+      */
      addNewBook = async (book, tense) => {
         return await this.addBookToCollection(book)
             .then((bookRef) => {
@@ -170,15 +250,29 @@ class Firebase {
             });
      }
 
-     /*moveBook = (bookId, fromTense, toTense) => {
+     /**
+      * Moves book from one shelf to another
+      * @param bookId id of book to move
+      * @param fromTense current shelf book is in (will, have, or current)
+      * @param toTense shelf to move book to (will, have, or current)
+      */
+     moveBook = (bookId, fromTense, toTense) => {
         let bookRef = this.db.collection("books").doc(bookId);
-        let shelfRef = this.db.collection("shelves").doc(this.auth.currentUser.uid);
         
+        this.removeBook(bookId, fromTense);
+        this.addBookToUser(bookRef, toTense);
+        this.addUserToBook(bookRef, toTense);
 
-     }*/
+     }
 
-     removeBook = (bookRef, tense) => {
+     /**
+      * Removes book from shelf document
+      * @param bookId id of book document to move
+      * @param tense shelf to add book to (will, have, or current)
+      */
+     removeBook = (bookId, tense) => {
         let shelfRef = this.db.collection('shelves').doc(this.auth.currentUser.uid);
+        let bookRef = this.db.collection('books').doc(bookId);
 
         switch(tense) {
             case TENSE.HAVE:
@@ -201,6 +295,11 @@ class Firebase {
         }
      }
 
+     /**
+      * Gets every book object from a given array
+      * @param bookRefArray array of book references
+      * @returns Promise containing array of book objects
+      */
      getBooksFromShelf = async (bookRefArray) => {
         var books = [];
 
@@ -214,6 +313,11 @@ class Firebase {
         return books;
      }
 
+     /**
+      * Gets a single book from a book reference
+      * @param bookRef reference to book document
+      * @returns Promise containing a book object
+      */
      getBookFromRef = async (bookRef) => {
         var book = {title: null, authorName: null, id: null};
         
@@ -229,6 +333,10 @@ class Firebase {
             });
      }
 
+     /**
+      * Gets entire breadshelf object
+      * @returns Promise contains breadshelf object
+      */
      getBreadshelf = async () => {
         let shelfRef = this.db.collection('shelves').doc(this.auth.currentUser.uid);
         var shelfDoc = null;
@@ -248,7 +356,7 @@ class Firebase {
                 if(shelfDoc.data().current !== null && shelfDoc.data().current !== undefined) {
                     return this.getBookFromRef(shelfDoc.data().current);  
                 } else {
-                    return Promise.resolve({title: null});
+                    return Promise.resolve({title: null, authorName: null, id: null});
                 }
             })
             .then((currentBook) => {
@@ -256,7 +364,7 @@ class Firebase {
                 return breadshelf;
             })
             .catch(error => {
-                console.log(error);
+                console.log("error: " + error);
             });
      }
      

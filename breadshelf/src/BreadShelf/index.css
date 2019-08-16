@@ -1,0 +1,48 @@
+.Content {
+    width: 80%;
+    height: 100%;
+    margin: 0 auto;
+}
+
+.ContentMobile {
+    width: 98%;
+    height: 100%;
+    margin: 0 auto;
+}
+
+.Header {
+    color: #c798d2;
+    height: fit-content;
+    display: block;
+}
+
+.Header .Logo {
+    display: inline-block;
+    float: left;
+}
+
+.Header .Logo h1 {
+    margin: 0.1rem;
+    width: fit-content;
+}
+
+.Header .SignOutButton {
+    display: inline-block;
+    float: right;
+    margin-top: 0.25rem;
+}
+
+.Shelf {
+    display: block;
+    clear: left;
+    height: 90%;
+}
+
+.BreadshelfListContent {
+    height: 80%;
+}
+
+.BreadshelfListContentMobile {
+    height: 85%;
+    margin-bottom: 1rem;
+}

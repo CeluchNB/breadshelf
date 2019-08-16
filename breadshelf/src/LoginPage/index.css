@@ -1,0 +1,19 @@
+.LoginPage {
+    height: 100%;
+    width: 100%;
+    background-color: #ebebeb;
+    text-align: center;
+}
+
+.HeadContainer {
+    padding-top: 5rem;
+}
+
+.Header {
+    color: #c798d2;
+    margin-top: 0;
+}
+
+.LogInButton, .CreateButton {
+    margin-top: 1rem;
+}

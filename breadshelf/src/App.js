@@ -1,18 +1,18 @@
 import React from 'react';
-
 import './App.css';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import LoginPage from './LoginPage';
+import CreateAccountPage from './CreateAccountPage';
+import BreadShelf from './BreadShelf';
+import * as ROUTES from './constants/routes.js';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>breadshelf</h1>
-      </header>
-      <div className="Construction">
-        <h3>Under Construction</h3>
-        <img src="/temp_shelf.png" />
-      </div>
-    </div>
+    <Router>
+        <Route exact path={ROUTES.LANDING} component={LoginPage} />
+        <Route path={ROUTES.SIGN_UP} component={CreateAccountPage} />
+        <Route path={ROUTES.BREADSHELF} component={BreadShelf} />
+    </Router>
   );
 }
 

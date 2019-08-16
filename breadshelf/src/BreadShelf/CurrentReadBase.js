@@ -12,12 +12,17 @@ class CurrentReadBase extends Component {
         super(props);
         this.state = {
             book: props.book,
-            hasBook: props.hasBook
+            hasBook: props.hasBook,
+            isMobile: false
         }
     }
 
     componentWillReceiveProps(props) {
-        this.setState({ book: props.book, hasBook: props.hasBook });
+        this.setState({ 
+            book: props.book, 
+            hasBook: props.hasBook,
+            isMobile: props.isMobile
+         });
     }
 
     doneClicked = () => {
@@ -67,11 +72,15 @@ class CurrentReadBase extends Component {
                                 }}>
                                 <Typography 
                                     variant="subtitle1" 
-                                    style={{display: 'inline-block', marginRight: '1rem'}}>
+                                    style={this.state.isMobile ? 
+                                        {display: 'block'} :
+                                        {display: 'inline-block', marginRight: '1rem'}}>
                                     {this.state.hasBook ? this.state.book.title : "No Current Book"}
                                 </Typography>
                                 <Typography variant="subtitle2"
-                                    style={{display: 'inline-block'}}>
+                                    style={ this.state.isMobile ? 
+                                        {display: 'block', marginBottom: '0.1rem'} :
+                                        {display: 'inline-block'}}>
                                     {this.state.hasBook ? this.state.book.authorName : "Get Reading!"}
                                 </Typography>
                             </div>

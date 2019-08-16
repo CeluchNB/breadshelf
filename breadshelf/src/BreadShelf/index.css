@@ -4,6 +4,12 @@
     margin: 0 auto;
 }
 
+.ContentMobile {
+    width: 98%;
+    height: 100%;
+    margin: 0 auto;
+}
+
 .Header {
     color: #c798d2;
     height: fit-content;
@@ -29,9 +35,14 @@
 .Shelf {
     display: block;
     clear: left;
-    height: 100%;
+    height: 90%;
 }
 
 .BreadshelfListContent {
-    height: 70%;
+    height: 80%;
+}
+
+.BreadshelfListContentMobile {
+    height: 85%;
+    margin-bottom: 1rem;
 }

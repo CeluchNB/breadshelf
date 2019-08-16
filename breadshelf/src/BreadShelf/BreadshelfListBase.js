@@ -26,7 +26,8 @@ class BreadshelfListBase extends Component {
         }
 
         this.state = {
-            books: [...this.props.books]
+            books: [...this.props.books],
+            isMobile: window.innerWidth <= 800
         };
 
         if(this.props.tense === "will") {
@@ -41,7 +42,7 @@ class BreadshelfListBase extends Component {
     }
 
     componentWillReceiveProps(props) {
-        this.setState({ books: [...props.books]});
+        this.setState({ books: [...props.books], isMobile: props.isMobile});
     }
 
     addBook = (book) => {
@@ -54,14 +55,6 @@ class BreadshelfListBase extends Component {
 
     moveBook = (book, index) => {
         this.props.moveBook(book, index);
-    }
-
-    updateStyles = () => {
-        
-    }
-
-    componentWillMount() {
-
     }
 
     render() {
@@ -81,7 +74,8 @@ class BreadshelfListBase extends Component {
         };
 
         return (
-            <div className="BreadshelfList" style={{float: this.state.floatDirection}}>
+            <div className={this.state.isMobile ? "BreadshelfListMobile" : "BreadshelfList"} 
+                style={{float: this.state.floatDirection}}>
                 <Paper style={paperStyle}>
                     <Typography variant="h6" style={headerStyle}>{this.state.tenseTitle}</Typography>
                     <Scrollbars

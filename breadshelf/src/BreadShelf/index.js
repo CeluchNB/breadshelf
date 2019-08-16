@@ -20,7 +20,7 @@ class BreadShelfBase extends Component {
             haveBooks: [],
             currentBook: {},
             hasCurrent: false,
-            mobileView: false
+            isMobile: window.innerWidth <= 800
         };
         
         this.props.firebase.auth.onAuthStateChanged((user) => {
@@ -156,10 +156,22 @@ class BreadShelfBase extends Component {
         this.removeCurrent();
     }
 
+    updateStyles = () => {
+        this.setState({ isMobile: window.innerWidth <= 800 });
+    }
+
+    componentWillMount() {
+        window.addEventListener("resize", this.updateStyles.bind(this));
+    }
+
+    componentWillUnmount() {
+        window.addEventListener("resize", this.updateStyles.bind(this));
+    }
+
     render() {
         return (
             <MuiThemeProvider theme={theme}>
-                <div className="Content">
+                <div className={this.state.isMobile ? "ContentMobile" : "Content"}>
                     <div className="Header">
                         <div className="Logo">
                             <h1 >breadshelf</h1>
@@ -173,22 +185,25 @@ class BreadShelfBase extends Component {
                             book={this.state.currentBook} 
                             hasBook={this.state.hasCurrent}
                             moveCurrentToWill={this.moveCurrentToWill}
-                            moveCurrentToDone={this.moveCurrentToDone} />
-                        <div className="BreadshelfListContent">
+                            moveCurrentToDone={this.moveCurrentToDone}
+                            isMobile={this.state.isMobile} />
+                        <div className={this.state.isMobile ? "BreadshelfListContentMobile" : "BreadshelfListContent"}>
                             <WillRead 
                                 tense="will"
                                 hasCurrent={this.state.hasCurrent}
                                 books={this.state.willBooks} 
                                 addBook={this.addWillBook}
                                 removeBook={this.removeWillBook}
-                                moveBook={this.moveWillBook}/>
+                                moveBook={this.moveWillBook}
+                                isMobile={this.state.isMobile}/>
                             <HaveRead 
                                 tense="have"
                                 hasCurrent={this.state.hasCurrent}
                                 books={this.state.haveBooks} 
                                 addBook={this.addHaveBook}
                                 removeBook={this.removeHaveBook}
-                                moveBook={this.moveHaveBook}/>
+                                moveBook={this.moveHaveBook}
+                                isMobile={this.state.isMobile}/>
                         </div>
                     </div>
                 </div>

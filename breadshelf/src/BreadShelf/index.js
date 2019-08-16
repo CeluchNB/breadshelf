@@ -27,12 +27,14 @@ class BreadShelfBase extends Component {
             if(user !== null) {
                 this.props.firebase.getBreadshelf()
                     .then(breadshelf => {
-                        this.setState({
-                            willBooks: breadshelf.willBooks,
-                            haveBooks: breadshelf.haveBooks,
-                            currentBook: breadshelf.currentBook,
-                            hasCurrent: breadshelf.currentBook.title === null ? false : true
-                        });
+                        if(breadshelf.willBooks !== null) {
+                            this.setState({
+                                willBooks: breadshelf.willBooks,
+                                haveBooks: breadshelf.haveBooks,
+                                currentBook: breadshelf.currentBook,
+                                hasCurrent: breadshelf.currentBook.title === null ? false : true
+                            });
+                        }
                     });
             }
         });
@@ -226,7 +228,6 @@ class SignOutButtonBase extends Component {
     }
 
     signOut() {
-        localStorage.setItem('userData', null);
         this.props.firebase.doSignOut().then(user => this.props.history.push(ROUTES.LANDING));
     }
 

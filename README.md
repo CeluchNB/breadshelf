@@ -1,2 +1,2 @@
 # breadshelf
-Platform for collaborative and personal reading tracking
+Platform for collaborative and personal book tracking
